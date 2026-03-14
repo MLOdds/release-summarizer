@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Teknoloji Sürüm Özeti - 13 March 2026</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#111; line-height:1.5; margin:0; padding:24px; background:#f7f8fa; }
+    .container { max-width:900px; margin:0 auto; background:#fff; padding:28px; border-radius:8px; box-shadow:0 2px 8px rgba(16,24,40,0.06); }
+    h1 { font-size:20px; margin:0 0 18px 0; color:#0b3b66; }
+    h2 { font-size:16px; margin:20px 0 10px 0; color:#0b3b66; border-bottom:1px solid #e6eef6; padding-bottom:8px; }
+    p { margin:8px 0; }
+    ul { margin:8px 0 12px 20px; }
+    .meta { font-size:13px; color:#475569; margin-bottom:12px; }
+    a { color:#0b63b2; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    footer { margin-top:22px; padding-top:12px; border-top:1px solid #eef2f7; font-size:13px; color:#6b7280; }
+    .badge { display:inline-block; background:#eef2ff; color:#084298; font-size:12px; padding:3px 8px; border-radius:999px; margin-left:8px; }
+    .code { font-family:SFMono-Regular,Menlo,monospace;background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teknoloji Sürüm Özeti - 13 March 2026</h1>
+
+    <h2>MLflow</h2>
+    <div class="meta">Sürümler: <span class="code">v3.10.1</span> (2026-03-05), <span class="code">v3.10.0</span> (2026-02-20)</div>
+    <p>Özet: v3.10 serisi multi‑workspace/organizasyon desteği, çok turlu değerlendirme ve konuşma simülasyonu, trace maliyet takibi ve yeniden tasarlanmış navigasyon/deneme (mlflow demo) gibi GenAI odaklı ve klasik ML iş akışlarını kolaylaştıran özellikler getirdi. v3.10.1 dikkat çekici hata düzeltmeleri ve workspace ile ilgili erişim/indirme sorunlarını giderdi.</p>
+    <ul>
+      <li><strong>Yeni özellikler (özellikle v3.10.0):</strong> Organizasyon/multi‑workspace, multi‑turn değerlendirme & oturum seviyesi scorer’lar, LLM span maliyet takibi, nav bar yeniden tasarımı (GenAI / Classical ML ayrımı), tek tıkla demo deneyimi, gateway kullanım takibi ve in‑UI trace değerlendirme.</li>
+      <li><strong>Uyumluluk / Breaking notes:</strong> Resmi bir breaking change ilanı yok; ancak DB migration öncesi logged_model.experiment_id için CASCADE değişikliği ve workspace etkinse davranış değişiklikleri nedeniyle yedek/migration kontrolü önerilir.</li>
+      <li><strong>Önemli düzeltmeler (v3.10.1):</strong> Workspace ile ilgili 403/indirme hataları, tracing/assessments.trace_id NOT NULL, MCP fn_wrapper ve span/çıktı işleme sorunları; UI modal/zaman seçici/tooltip/chart düzeltmeleri; Model Registry workspace arası copy hatası giderildi; SSO/OIDC dokümantasyon eklemeleri.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/mlflow/mlflow/releases/tag/v3.10.1">v3.10.1 release notları</a></p>
+
+    <h2>Qdrant</h2>
+    <div class="meta">Son sürüm: <span class="code">v1.17.0</span> (2026-02-20) — önceki: v1.16.3, v1.16.2</div>
+    <p>Özet: v1.17.0 ile Relevance Feedback, optimizasyon ilerleme raporları, cluster telemetri API'si, sınırsız güncelleme kuyruğu, Audit Access Logging ve Weighted RRF gibi özellikler eklendi; altyapı/performans ve snapshot/replication güvenilirliği üzerinde iyileştirmeler sürdürüldü. Önceki 1.16.x sürümleri kritik WAL/consensus düzeltmeleri içeriyordu.</p>
+    <ul>
+      <li><strong>Yeni/öne çıkan:</strong> Relevance Feedback, optimizasyon ilerleme raporu API, cluster telemetri toplama API'si, sınırsız update queue, Audit Access Logging, weighted RRF, upsert için update_mode, ikincil API anahtarı rotasyonu ve /metrics için ayrı port.</li>
+      <li><strong>İyileştirmeler:</strong> Snapshot kurtarma optimizasyonları, syncfs flush iyileştirmeleri, okuma/güncelleme timeout geliştirmeleri.</li>
+      <li><strong>Düzeltmeler:</strong> 1.16.2/1.16.3 zinciri kritik WAL/consensus veri bozulması risklerini giderdi; snapshot/replica transfer hataları, disk IO ve shard transfer/abort mantık hataları düzeltildi.</li>
+      <li><strong>Breaking changes:</strong> Bu sürümlerde geriye dönük uyumluluğu bozan değişiklik bildirilmemiştir.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/qdrant/qdrant/releases/tag/v1.17.0">v1.17.0 release notları</a></p>
+
+    <h2>OpenShift AI</h2>
+    <div class="meta">Son sürüm: <span class="code">v3.4.0-ea.2</span> (2026-03-10) — önceki: v3.4.0-ea.1, v3.3.0</div>
+    <p>Özet: ea.2 sürümü ODH Monitoring için admission/webhook bileşenleri eklerken, önceki adımlarda ModelsAsService (MaaS) ve katalog/imaj yönetimi otomasyonları geliştirildi. Monitoring, TLS/CA düzeltmeleri ve observability iletişimi için NetworkPolicy istisnaları gibi güvenilirlik iyileştirmeleri yapılmış; semver uyumluluk ve bundle/sürüm etiketleme davranışında değişiklikler dikkat edilmesi gereken konular arasında.</p>
+    <ul>
+      <li><strong>Yeni özellikler:</strong> ODH monitoring admission bileşenleri/webhook (ea.2), MaaS controller (v3.3), katalog/imaj yönetimi iyileştirmeleri ve build catalog otomasyonu, MLServer ServingRuntime desteği genişletmeleri.</li>
+      <li><strong>Düzeltmeler:</strong> RELEASE/RELATED_IMAGES otomasyon hatası, monitoring TLS/Prometheus CA yolu düzeltmeleri, e2e timeout çakışmalarının azaltılması, konflux onboarder parametre eklemesi.</li>
+      <li><strong>Olası breaking değişiklikler:</strong> Semver zorunluluğu ve sürüm/bundle etiketleme mantığı değişti; Trainer v1 varsayılanlarında "Removed" değişiklikleri ve Notebooks donanım profili davranışında refaktörler nedeniyle konfigürasyon kontrolü önerilir.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/opendatahub-io/opendatahub-operator/releases/tag/v3.4.0-ea.2">v3.4.0-ea.2 release notları</a></p>
+
+    <h2>Red Hat AI (InstructLab)</h2>
+    <div class="meta">Son sürüm: <span class="code">v0.26.1</span> (2025-05-05) — önceki: v0.26.0, v0.26.0a1</div>
+    <p>Özet: Model family desteği, YAML tabanlı model id konfigürasyonu, Pydantic → YAML seri hale getirme iyileştirmeleri ve ek e2e/GPU testleri getirildi. Önemli olarak Python 3.10 desteği kaldırıldı ve bağımlılık kısıtlarında değişiklikler var; bu, çalışma zamanları ve paketleme davranışı üzerinde etkiler doğurabilir.</p>
+    <ul>
+      <li><strong>Yeni özellikler:</strong> model family alanı, YAML’den model id varsayılanlarını alma, Pydantic listelerinin YAML dökümü geliştirmeleri, yeni e2e/GPU test varyantları.</li>
+      <li><strong>Breaking changes:</strong> Python 3.10 desteği kaldırıldı (en az Python 3.11/3.12 bekleniyor). Bağımlılık sınırları güncellendi (ör. torch <2.7.0, vllm >=0.8.0,<0.9.0) ve bazı autoconfig/torchscript davranışları değişti.</li>
+      <li><strong>Düzeltmeler:</strong> v0.26.1'de CUDA kontrolüyle ilgili çökme düzeltildi; v0.26.0'da generation davranışı ve CLI/GPU rehberi iyileştirildi.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/instructlab/instructlab/releases/tag/v0.26.1">v0.26.1 release notları</a></p>
+
+    <h2>Ray</h2>
+    <div class="meta">Son sürüm: <span class="code">ray-2.54.0</span> (2026-02-18) — önceki: 2.53.0, 2.51.2</div>
+    <p>Özet: Ray Data tarafında checkpointing, genişletilmiş Compute Expression seti ve read_sql/sql_params desteği; yeni veri kaynakları (Kafka, Iceberg evrimi) ve V2 veri odaklı cluster autoscaler ile ölçekleme güncellemeleri öne çıkıyor. API kaldırmaları ve pydantic desteğiyle ilgili ileriye dönük uyarılar var.</p>
+    <ul>
+      <li><strong>Yeni özellikler:</strong> Ray Data checkpointing, çok sayıda Compute Expression, read_sql ve sql_params, Kafka datasource, Iceberg evrimi desteği; V2 autoscaler 2.54 ile varsayılan hale getirildi.</li>
+      <li><strong>Breaking / dikkat:</strong> Pydantic V1 desteği gelecekte bırakılacak; 2.54 ile yeni autoscaler varsayılan olması davranış değiştirebilir; bazı deprecated API'ler kaldırıldı (ör. TENSOR_COLUMN_NAME, meta_provider, read_parquet_bulk vb.).</li>
+      <li><strong>Düzeltmeler:</strong> CVE-2025-62593 dashboard header reddi düzeltmesi (2.51.2), sayısal kararlılık ve Iceberg yazma/okuma güvenilirliği iyileştirmeleri.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/ray-project/ray/releases/tag/ray-2.54.0">ray-2.54.0 release notları</a></p>
+
+    <h2>KServe</h2>
+    <div class="meta">Son sürüm: <span class="code">v0.17.0</span> (2026-03-13)</div>
+    <p>Özet: v0.17.0 birçok deployment ve runtime iyileştirmesi, pathTemplate ile inference routing desteği, Storage-initializer paralelleştirmeleri (Azure/S3), LLMInferenceService stop desteği ve paketleme/CRD entegrasyonları getiriyor. Güvenlik zafiyetleri için önemli CVE sabitlemeleri uygulanmış, Helm/CRD isimlendirme ve Kubernetes derleme gereksinimleri nedeniyle uyumluluk kontrolleri öneriliyor.</p>
+    <ul>
+      <li><strong>Yeni özellikler:</strong> inference service için pathTemplate routing, paralel storage indirme, LLMInferenceService stop, quick-install/helm kurulum iyileştirmeleri, CSV/Parquet marshaller desteği, S3 protocol endpoint desteği.</li>
+      <li><strong>Güvenlik / düzeltmeler:</strong> starlette sabitlenmesi ile CVE-2025-62727 ve diğer CVE'ler giderildi; path traversal engelleme, multi storage URI mount hataları düzeltildi.</li>
+      <li><strong>Breaking / dikkat:</strong> Helm chart isimlendirmelerinde değişiklikler (llmisvc için suffix eklenmesi), cert-manager annotation kaldırılması ve derleme için Go/Kubebuilder gereksinimleri güncellendi — uyumluluk kontrolü önerilir.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/kserve/kserve/releases/tag/v0.17.0">v0.17.0 release notları</a></p>
+
+    <h2>Docker (Moby)</h2>
+    <div class="meta">Son sürüm: <span class="code">docker-v29.3.0</span> (2026-03-05) — client/v0.3.0, api/v1.54.0</div>
+    <p>Özet: CLI ve API tarafında bind mount için yeni seçenekler, plugin hook davranış genişletmeleri ve BuildKit güncellemesi öne çıkıyor. Kritik geriye dönük uyumsuzluk bildirilmemiş olsa da plugin hook'larının hata durumlarında tetiklenmesi ve AMD GPU enjeksiyon değişiklikleri dikkat gerektirir.</p>
+    <ul>
+      <li><strong>Yeni özellikler:</strong> --mount bind-create-src seçeneği, plugin hook'larının hata durumlarında da tetiklenmesi / error-hooks, API için identity parametreleri, BuildKit v0.28.0 güncellemesi.</li>
+      <li><strong>Dikkat:</strong> Plugin davranışındaki genişleme ve AMD GPU için CDI tabanlı enjeksiyon deploy/CI süreçlerinde kontrol gerektirebilir.</li>
+      <li><strong>Düzeltmeler:</strong> DNS konfigürasyonu reload sorunları, "rw layer snapshot not found", Windows docker top panic’i, sd_notify/systemd reload iyileştirmeleri ve gereksiz mount uyarıları azaltıldı.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/moby/moby/releases/tag/docker-v29.3.0">docker-v29.3.0 release notları</a></p>
+
+    <h2>Kubernetes</h2>
+    <div class="meta">Son sürüm: <span class="code">v1.36.0-alpha.2</span> (2026-02-26) — stabil patch: v1.35.2, v1.34.5</div>
+    <p>Özet: v1.36.0-alpha.2 deneysel özellikler ve API değişiklikleri içerir; alpha kanalındaki değişiklikler kararlı olmayan ve geriye dönük uyumluluk riski taşıyabilir. v1.35.2 / v1.34.5 patch sürümleri kararlılık ve güvenlik düzeltmeleri sağlıyor. Üretime yükseltmeden önce ilgili CHANGELOG ve API değişiklikleri dikkatle incelenmelidir.</p>
+    <ul>
+      <li><strong>v1.36.0-alpha.2:</strong> Alpha düzeyinde deneysel API/feature güncellemeleri; üretime yükseltmeden önce değerlendirme önerilir.</li>
+      <li><strong>v1.35.2 / v1.34.5:</strong> Patch odaklı kararlılık ve güvenlik düzeltmeleri.</li>
+    </ul>
+    <p><strong>Detay & indirme:</strong> <a href="https://github.com/kubernetes/kubernetes/releases/tag/v1.36.0-alpha.2">v1.36.0-alpha.2 release notları</a> (CHANGELOG ve ilgili versiyon duyuruları için bağlantılara bakınız)</p>
+
+    <footer>
+      Oluşturulma tarihi: 13 March 2026
+    </footer>
+  </div>
+</body>
+</html>

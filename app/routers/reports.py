@@ -24,10 +24,12 @@ async def generate_report(db: AsyncSession = Depends(get_db)):
     return report
 
 
-@router.get("/", response_model=list[ReportRead])
+@router.get("/", response_model=list[dict])
 async def list_reports(limit: int = 10, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Report).order_by(desc(Report.created_at)).limit(limit))
-    return result.scalars().all()
+    result = await db.execute(
+        select(Report.id, Report.created_at).order_by(desc(Report.created_at)).limit(limit)
+    )
+    return [{"id": row.id, "created_at": row.created_at} for row in result]
 
 
 @router.get("/{report_id}", response_model=ReportRead)

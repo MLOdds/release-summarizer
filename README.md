@@ -181,4 +181,6 @@ app/
 ├── services/    # FastAPI'den bağımsız iş mantığı
 └── routers/     # API endpoint'leri
 job.py           # Standalone CronJob entrypoint
+examples/
+└── sample-report.html  # Örnek HTML rapor çıktısı
 ```
