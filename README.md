@@ -1,12 +1,13 @@
 # release-summarizer
 
-Teknoloji projelerinin GitHub release'lerini haftalık takip eden, OpenAI Agents ile özetleyen ve HTML e-posta raporu oluşturan servis.
+Teknoloji projelerinin GitHub release'lerini haftalık takip eden, AI ile özetleyen ve HTML e-posta raporu oluşturan servis.
+OpenAI modelleri yanı sıra **LiteLLM** entegrasyonu sayesinde Anthropic, Google Gemini, Mistral ve self-hosted (Ollama, LM Studio, vLLM) modeller de kullanılabilir.
 
 ## Çalışma Şekli
 
-- Tüm kaynaklar **aynı anda paralel** çekilir (`asyncio.gather` + `Semaphore(4)` ile OpenAI çağrıları throttle edilir)
+- Tüm kaynaklar **aynı anda paralel** çekilir (`asyncio.gather` + `Semaphore(4)` ile AI çağrıları throttle edilir)
 - Her kaynakta önce GitHub'dan son sürüm tag'ı alınır, **DB'deki bilinen sürümle karşılaştırılır**
-- Sürüm değişmemişse o kaynak için **OpenAI'ya hiç gidilmez** — sadece değişen kaynaklar özetlenir
+- Sürüm değişmemişse o kaynak için **AI'ya hiç gidilmez** — sadece değişen kaynaklar özetlenir
 - Hiç yeni sürüm yoksa rapor oluşturulmaz, job başarıyla çıkar
 
 ## Gereksinimler
@@ -48,8 +49,8 @@ docker run --rm \
 ### uv ile lokal
 
 ```bash
-cp .env.example .env
-# .env içine OPENAI_API_KEY değerini gir
+cp .env-example .env
+# .env içine gerekli değişkenleri gir (OpenAI veya LiteLLM)
 
 uv sync # bağımlılıkları yükler, .venv + uv.lock oluşturur
 
@@ -74,11 +75,48 @@ uvicorn app.main:app --reload
 
 | Değişken | Zorunlu | Varsayılan | Açıklama |
 |---|---|---|---|
-| `OPENAI_API_KEY` | ✅ | — | OpenAI API anahtarı |
-| `MODEL` | | `gpt-5-mini` | Kullanılacak model |
+| `OPENAI_API_KEY` | OpenAI kullanılıyorsa ✅ | — | OpenAI API anahtarı |
+| `MODEL` | | `gpt-4o-mini` | Kullanılacak model (OpenAI için model adı, LiteLLM için `provider/model` formatı) |
+| `LITELLM_API_KEY` | LiteLLM kullanılıyorsa ✅ | — | Sağlayıcıya ait API anahtarı veya proxy master key |
+| `LITELLM_BASE_URL` | | — | Self-hosted LiteLLM proxy adresi (örn. `http://localhost:4000`) |
 | `GITHUB_TOKEN` | | — | GitHub rate limit için (opsiyonel) |
-| `MAX_CONCURRENT_AI` | | `4` | Paralel OpenAI çağrısı limiti |
+| `MAX_CONCURRENT_AI` | | `4` | Paralel AI çağrısı limiti |
 | `SOURCE_TIMEOUT` | | `90` | Kaynak başına timeout (saniye) |
+
+## Model Seçimi
+
+Model adında `/` varsa veya `LITELLM_API_KEY` set edilmişse **LiteLLM** devreye girer, aksi hâlde native OpenAI client kullanılır.
+
+### OpenAI
+
+```env
+OPENAI_API_KEY=sk-proj-xxxx
+MODEL=gpt-4o-mini
+```
+
+### Anthropic Claude
+
+```env
+LITELLM_API_KEY=sk-ant-xxxx
+MODEL=anthropic/claude-3-5-sonnet-20240620
+```
+
+### Google Gemini
+
+```env
+LITELLM_API_KEY=AIza-xxxx
+MODEL=gemini/gemini-1.5-pro
+```
+
+### Self-hosted LiteLLM Proxy (Ollama, LM Studio, vLLM)
+
+```env
+LITELLM_BASE_URL=http://localhost:4000
+LITELLM_API_KEY=<proxy-master-key>
+MODEL=qwen3.5-9b
+```
+
+> LiteLLM desteklediği tüm sağlayıcılar için: https://docs.litellm.ai/docs/providers
 
 ## API
 
@@ -177,7 +215,7 @@ schedule: "0 7 * * 1"  # Her Pazartesi 07:00
 app/
 ├── core/        # config, database
 ├── db/          # modeller, seed kaynakları
-├── agents/      # OpenAI Agents (fetch, summarize, compose)
+├── agents/      # AI Agents — OpenAI veya LiteLLM (fetch, summarize, compose)
 ├── services/    # FastAPI'den bağımsız iş mantığı
 └── routers/     # API endpoint'leri
 job.py           # Standalone CronJob entrypoint
