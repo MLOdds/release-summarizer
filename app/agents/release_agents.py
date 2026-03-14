@@ -2,10 +2,11 @@ import asyncio
 import hashlib
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
 import httpx
-from agents import Agent, Runner
+from agents import Agent, ModelSettings, Runner
+from agents.extensions.models.litellm_model import LitellmModel
 
 from app.core.config import settings
 
@@ -27,23 +28,55 @@ def _build_http_client() -> httpx.AsyncClient:
 
 http_client = _build_http_client()
 
-# OpenAI paralel çağrı limiti — modül ilk import edildiğinde event loop hazır olduğu için güvenli
-_openai_sem: asyncio.Semaphore | None = None
+# AI paralel çağrı limiti
+_ai_sem: asyncio.Semaphore | None = None
 
 
-def _get_openai_sem() -> asyncio.Semaphore:
+def _get_ai_sem() -> asyncio.Semaphore:
     """Semaphore'u ilk kullanımda oluşturur (event loop garantisi için lazy init)."""
-    global _openai_sem
-    if _openai_sem is None:
-        _openai_sem = asyncio.Semaphore(settings.max_concurrent_ai)
-    return _openai_sem
+    global _ai_sem
+    if _ai_sem is None:
+        _ai_sem = asyncio.Semaphore(settings.max_concurrent_ai)
+    return _ai_sem
+
+
+def _build_model() -> Union[str, LitellmModel]:
+    """
+    LiteLLM kullanılacaksa LitellmModel döner, aksi hâlde model adını string olarak döner.
+    Tetikleme koşulları:
+      - litellm_api_key set edilmişse (non-OpenAI sağlayıcı)
+      - model adı 'provider/model' formatındaysa (örn: anthropic/claude-3-5-sonnet-20240620)
+    """
+    use_litellm = bool(settings.litellm_api_key) or "/" in settings.model
+    if use_litellm:
+        api_key = settings.litellm_api_key or settings.openai_api_key or None
+        base_url = settings.litellm_base_url or None
+        # Proxy kullanılıyorsa ve model adında provider prefix yoksa openai/ ekle
+        # (proxy OpenAI-compatible endpoint sunduğu için)
+        model_name = settings.model
+        if base_url and "/" not in model_name:
+            model_name = f"openai/{model_name}"
+        logger.info(f"LiteLLM modeli kullanılıyor: {model_name} (base_url={base_url or 'default'})")
+        return LitellmModel(model=model_name, api_key=api_key, base_url=base_url)
+    return settings.model
+
+
+def _build_model_settings() -> Optional[ModelSettings]:
+    """LiteLLM kullanılıyorsa usage takibi için include_usage=True döner."""
+    if bool(settings.litellm_api_key) or "/" in settings.model:
+        return ModelSettings(include_usage=True)
+    return None
 
 
 # --- Agents ---
 
+_model = _build_model()
+_model_settings = _build_model_settings()
+
 summarizer_agent = Agent(
     name="ReleaseSummarizer",
-    model=settings.model,
+    model=_model,
+    model_settings=_model_settings,
     instructions="""
 Sen bir teknik release özeti yazarısın. Verilen teknolojinin release notlarını Türkçe olarak özetle.
 
@@ -59,7 +92,8 @@ Sen bir teknik release özeti yazarısın. Verilen teknolojinin release notları
 
 email_composer_agent = Agent(
     name="EmailComposer",
-    model=settings.model,
+    model=_model,
+    model_settings=_model_settings,
     instructions="""
 Sen bir teknik bülten yazarısın. Verilen teknoloji sürüm özetlerinden profesyonel bir HTML e-posta oluştur.
 
@@ -115,7 +149,7 @@ async def fetch_github_releases(repo: str, per_page: int = 5) -> list[dict]:
 # --- Orchestration ---
 
 async def _run_agent(agent, prompt: str) -> str:
-    async with _get_openai_sem():
+    async with _get_ai_sem():
         result = await Runner.run(agent, prompt)
     return result.final_output
 
